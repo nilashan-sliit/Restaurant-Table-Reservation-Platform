@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restaurant Reservation System</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body{
+            background:#f4f6f9;
+            padding:30px;
+        }
+
+        .container{
+            max-width:1000px;
+            margin:auto;
+        }
+
+        h1{
+            text-align:center;
+            margin-bottom:30px;
+            color:#333;
+        }
+
+        .card{
+            background:white;
+            padding:20px;
+            border-radius:12px;
+            box-shadow:0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom:25px;
+        }
+
+        .card h2{
+            margin-bottom:20px;
+            color:#444;
+        }
+
+        .form-group{
+            margin-bottom:15px;
+        }
+
+        label{
+            display:block;
+            margin-bottom:5px;
+            font-weight:bold;
+        }
+
+        input,
+        select{
+            width:100%;
+            padding:10px;
+            border:1px solid #ccc;
+            border-radius:8px;
+        }
+
+        button{
+            padding:10px 20px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:15px;
+        }
+
+        .btn-reserve{
+            background:#28a745;
+            color:white;
+        }
+
+        .btn-delete{
+            background:#dc3545;
+            color:white;
+        }
+
+        .btn-load{
+            background:#6c757d;
+            color:white;
+            margin-bottom:15px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:15px;
+        }
+
+        table th,
+        table td{
+            border:1px solid #ddd;
+            padding:12px;
+            text-align:center;
+        }
+
+        table th{
+            background:#343a40;
+            color:white;
+        }
+
+        .vip{
+            color:goldenrod;
+            font-weight:bold;
+        }
+
+        .normal{
+            color:#333;
+            font-weight:bold;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Restaurant Reservation System</h1>
+
+    <div class="card">
+
+        <h2>Reserve Table</h2>
+
+        <div class="form-group">
+            <label>Table Type</label>
+
+            <select id="tableType">
+                <option value="NORMAL">NORMAL</option>
+                <option value="VIP">VIP</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Capacity</label>
+            <input type="number" id="capacity" />
+        </div>
+
+        <div class="form-group">
+            <label>Location</label>
+
+            <select id="location">
+                <option value="WINDOW">Near Window</option>
+                <option value="FRONT_ROW">Front Row</option>
+                <option value="BACK_ROW">Back Row</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Reservation Date</label>
+            <input type="date" id="reservationDate" />
+        </div>
+
+        <button class="btn-reserve" onclick="reserveTable()">
+            Reserve
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>Reserved Tables</h2>
+
+        <button class="btn-load" onclick="loadTables()">
+            Load Reservations
+        </button>
+
+        <table>
+
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Table Type</th>
+                <th>Capacity</th>
+                <th>Location</th>
+                <th>Reservation Date</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+
+            <tbody id="tableBody"></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const BASE_URL = "http://localhost:8080/tables";
+
+
+    async function reserveTable() {
+
+        const table = {
+
+            tableType: document.getElementById("tableType").value,
+            capacity: document.getElementById("capacity").value,
+            location: document.getElementById("location").value,
+            reservationDate: document.getElementById("reservationDate").value
+        };
+
+        try {
+
+            const response = await fetch(`${BASE_URL}/add`, {
+
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify(table)
+            });
+
+            if(response.ok){
+
+                alert("Table reserved successfully");
+
+                loadTables();
+
+            } else {
+
+                alert("Reservation failed");
+            }
+
+        } catch(error){
+
+            console.error(error);
+
+            alert("Server connection failed");
+        }
+    }
+
+
+
+    async function loadTables() {
+
+        try {
+
+            const response = await fetch(BASE_URL);
+
+            const tables = await response.json();
+
+            const body = document.getElementById("tableBody");
+
+            body.innerHTML = "";
+
+            tables.forEach(table => {
+
+                body.innerHTML += `
+
+                    <tr>
+
+                        <td>${table.id}</td>
+
+                        <td class="${table.tableType.toLowerCase()}">
+                            ${table.tableType}
+                        </td>
+
+                        <td>${table.capacity}</td>
+
+                        <td>${table.location}</td>
+
+                        <td>${table.reservationDate}</td>
+
+                        <td>
+
+                            <button class="btn-delete"
+                                onclick="deleteTable(${table.id})">
+
+                                Cancel
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+                `;
+            });
+
+        } catch(error){
+
+            console.error(error);
+
+            alert("Could not load reservations");
+        }
+    }
+
+
+
+    async function deleteTable(id) {
+
+        try {
+
+            const response = await fetch(`${BASE_URL}/delete/${id}`, {
+
+                method: 'DELETE'
+            });
+
+            if(response.ok){
+
+                alert("Reservation cancelled");
+
+                loadTables();
+
+            } else {
+
+                alert("Cancel failed");
+            }
+
+        } catch(error){
+
+            console.error(error);
+        }
+    }
+
+
+    loadTables();
+
+</script>
+
+</body>
+</html>
