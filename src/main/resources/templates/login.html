@@ -46,7 +46,7 @@
             <span th:text="${success}">Account created successfully.</span>
         </div>
 
-        <form th:action="@{/users/login}" method="post" class="space-y-6">
+        <form th:action="@{/login}" method="post" class="space-y-6">
 
             <!-- Username -->
             <div>
@@ -72,7 +72,7 @@
 
         <p class="text-center text-sm text-stone-500 mt-6">
             New here?
-            <a th:href="@{/users/register}" class="text-amber-700 hover:underline font-medium">Create an account</a>
+            <a th:href="@{/register}" class="text-amber-700 hover:underline font-medium">Create an account</a>
         </p>
 
     </div>
