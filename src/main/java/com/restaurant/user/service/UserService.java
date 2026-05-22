@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -43,6 +44,17 @@ public class UserService {
     // Get all users (admin)
     public List<User> getAllUsers() throws IOException {
         return repo.findAll();
+    }
+
+    // Search users by username (case-insensitive substring)
+    public List<User> searchUsers(String q) throws IOException {
+        if (q == null || q.isBlank()) {
+            return repo.findAll();
+        }
+        String term = q.trim().toLowerCase();
+        return repo.findAll().stream()
+                .filter(u -> u.getUsername() != null && u.getUsername().toLowerCase().contains(term))
+                .collect(Collectors.toList());
     }
 
     // Get single user by ID

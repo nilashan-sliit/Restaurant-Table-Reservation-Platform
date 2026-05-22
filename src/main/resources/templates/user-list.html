@@ -19,15 +19,28 @@
 <body class="bg-texture min-h-screen p-6">
 
 <!-- Nav -->
-<nav class="max-w-6xl mx-auto flex items-center justify-between mb-10">
+<nav class="max-w-6xl mx-auto flex items-center justify-between mb-6">
     <div class="flex items-center gap-4">
         <h1 class="serif text-3xl font-semibold text-stone-800">TableGlo</h1>
         <span class="text-xs tracking-widest text-amber-700 uppercase bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">Admin Panel</span>
     </div>
-    <a th:href="@{/users/logout}"
-       class="text-xs tracking-widest uppercase text-amber-700 hover:text-amber-900 border border-amber-300 hover:border-amber-600 px-4 py-2 rounded-lg transition-colors">
-        Logout
-    </a>
+    <div class="flex items-center gap-4">
+        <!-- Search form (GET so results are bookmarkable) -->
+        <form th:action="@{/users/list}" method="get" class="flex items-center gap-2">
+            <input type="text" name="q" th:value="${q}" placeholder="Search username..."
+                   class="border border-stone-200 rounded-lg px-3 py-2 text-sm w-56 bg-white/90 focus:outline-none focus:ring-2 focus:ring-amber-300"/>
+            <button type="submit"
+                    class="bg-stone-800 hover:bg-amber-800 text-white text-xs tracking-widest uppercase px-4 py-2 rounded-lg">
+                Search
+            </button>
+            <a th:href="@{/users/list}" class="text-xs text-stone-600 hover:text-stone-800 ml-2">Reset</a>
+        </form>
+
+        <a th:href="@{/users/logout}"
+           class="text-xs tracking-widest uppercase text-amber-700 hover:text-amber-900 border border-amber-300 hover:border-amber-600 px-4 py-2 rounded-lg transition-colors">
+            Logout
+        </a>
+    </div>
 </nav>
 
 <div class="max-w-6xl mx-auto">
@@ -63,10 +76,13 @@
     <!-- Table -->
     <div class="bg-white/80 border border-stone-200 rounded-2xl shadow-sm overflow-hidden">
 
-        <!-- Empty state -->
+        <!-- Empty / No-results state -->
         <div th:if="${users.isEmpty()}" class="text-center py-20">
-            <p class="serif text-2xl text-stone-400">No users found</p>
-            <p class="text-sm text-stone-400 mt-2">Add a user to get started.</p>
+            <p th:if="${users.isEmpty() and (q == null or q == '')}" class="serif text-2xl text-stone-400">No users found</p>
+            <div th:if="${users.isEmpty() and (q != null and q != '')}" class="space-y-2">
+                <p class="serif text-2xl text-stone-400">No users found for "<span th:text="${q}"></span>"</p>
+                <p class="text-sm text-stone-400 mt-2">Try a different search or <a th:href="@{/users/register}" class="text-amber-700">add a user</a>.</p>
+            </div>
         </div>
 
         <table th:if="${!users.isEmpty()}" class="w-full text-sm">

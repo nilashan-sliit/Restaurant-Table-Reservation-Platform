@@ -106,16 +106,22 @@ public class UserController {
     }
 
     // ─── ADMIN USER LIST ────────────────────────────────────
+    // Supports optional search: GET /users/list?q=term
 
     @GetMapping("/list")
-    public String listUsers(Model model) throws IOException {
-        var users = service.getAllUsers();
+    public String listUsers(@RequestParam(value = "q", required = false) String q,
+                            Model model) throws IOException {
+        var users = (q == null || q.isBlank())
+                ? service.getAllUsers()
+                : service.searchUsers(q);
+
         long vipCount = users.stream()
-                .filter(u -> u.getMembershipType().equals("VIP")).count();
+                .filter(u -> "VIP".equals(u.getMembershipType())).count();
         long regularCount = users.size() - vipCount;
         model.addAttribute("users", users);
         model.addAttribute("vipCount", vipCount);
         model.addAttribute("regularCount", regularCount);
+        model.addAttribute("q", q == null ? "" : q);
         return "user-list";
     }
 
