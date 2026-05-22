@@ -35,7 +35,8 @@ public class UserController {
                            Model model) {
         try {
             service.register(username, password, email, phone, membershipType);
-            return "redirect:/users/login";
+            model.addAttribute("success", "Account created successfully.");
+            return "login";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             return "register";
