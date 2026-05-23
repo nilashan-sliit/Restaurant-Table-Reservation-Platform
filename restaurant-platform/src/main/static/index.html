@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff Management</title>
+</head>
+<body>
+<h1>Restaurant Staff Management</h1>
+
+<h2>Add Staff Member</h2>
+<label>ID: <input type="text" id="staffId"></label><br><br>
+<label>Name: <input type="text" id="staffName"></label><br><br>
+<label>Role: <input type="text" id="staffRole"></label><br><br>
+<label>Contact: <input type="text" id="staffContact"></label><br><br>
+<button onclick="addStaff()">Add Staff</button>
+
+<p id="result"></p>
+
+<script>
+    async function addStaff() {
+      const staff = {
+        id: document.getElementById('staffId').value,
+        name: document.getElementById('staffName').value,
+        role: document.getElementById('staffRole').value,
+        contact: document.getElementById('staffContact').value
+      };
+      const res = await fetch('/api/staff/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(staff)
+      });
+      document.getElementById('result').innerText = await res.text();
+    }
+</script>
+</body>
+</html>
