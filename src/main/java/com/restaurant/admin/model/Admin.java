@@ -1,11 +1,23 @@
 package com.restaurant.admin.model;
 
 public class Admin {
-    private String Id;
-    private String name;
 
-    public Admin(String id, String name, String password, String email, String phone) {
-        Id = id;
+    private String id;
+    private String name;
+    private String password;
+    private String email;
+    private String phone;
+
+    public Admin() {
+    }
+
+    public Admin(String id,
+                 String name,
+                 String password,
+                 String email,
+                 String phone) {
+
+        this.id = id;
         this.name = name;
         this.password = password;
         this.email = email;
@@ -13,11 +25,11 @@ public class Admin {
     }
 
     public String getId() {
-        return Id;
+        return id;
     }
 
     public void setId(String id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getName() {
@@ -51,8 +63,4 @@ public class Admin {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-
-    private String password;
-    private String email;
-    private String phone;
 }

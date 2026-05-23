@@ -49,6 +49,7 @@ public class AdminRepository {
     // Find by ID
     public Optional<Admin> findById(String id)
             throws IOException {
+
         ensureFileExists();
 
         return findAll().stream()
@@ -59,6 +60,7 @@ public class AdminRepository {
     // Find by username
     public Optional<Admin> findByUsername(String name)
             throws IOException {
+
         ensureFileExists();
 
         return findAll().stream()
@@ -69,7 +71,6 @@ public class AdminRepository {
     // Save admin
     public void save(Admin admin)
             throws IOException {
-        ensureFileExists();
 
         ensureFileExists();
 
@@ -85,6 +86,7 @@ public class AdminRepository {
     // Update admin
     public void update(Admin updated)
             throws IOException {
+
         ensureFileExists();
 
         List<Admin> admins = findAll();
@@ -157,7 +159,6 @@ public class AdminRepository {
 
     // Convert Admin -> line
     private String serialize(Admin admin) {
-
 
         return String.join("|",
                 admin.getId(),

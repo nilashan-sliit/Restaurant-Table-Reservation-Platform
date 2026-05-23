@@ -9,28 +9,24 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class AdminService {
+public class AdminService extends AdminRepository {
 
-    private final AdminRepository repo;
 
-    public AdminService(AdminRepository repo) {
-        this.repo = repo;
-    }
-
-    // Register admin
     public void register(String name,
                          String password,
                          String email,
                          String phone)
             throws IOException {
 
-        if (repo.findByUsername(name).isPresent()) {
+        // Check if username exists
+        if (findByUsername(name).isPresent()) {
 
             throw new IllegalArgumentException(
                     "Username already exists."
             );
         }
 
+        // Generate ID
         String id = "A" + System.currentTimeMillis();
 
         Admin admin = new Admin(
@@ -41,7 +37,7 @@ public class AdminService {
                 phone
         );
 
-        repo.save(admin);
+        save(admin);
     }
 
     // Login
@@ -49,34 +45,34 @@ public class AdminService {
                                  String password)
             throws IOException {
 
-        return repo.findByUsername(name)
+        return findByUsername(name)
                 .filter(a ->
                         a.getPassword()
                                 .equals(password));
     }
 
-    // Find all
+    // Find all admins
     public List<Admin> getAllAdmins()
             throws IOException {
 
-        return repo.findAll();
+        return findAll();
     }
 
     // Find by ID
     public Optional<Admin> getAdminById(String id)
             throws IOException {
 
-        return repo.findById(id);
+        return findById(id);
     }
 
-    // Update
+    // Update admin
     public void updateAdmin(String id,
                             String email,
                             String phone,
                             String password)
             throws IOException {
 
-        Admin admin = repo.findById(id)
+        Admin admin = findById(id)
                 .orElseThrow(() ->
                         new IllegalArgumentException(
                                 "Admin not found."
@@ -86,14 +82,13 @@ public class AdminService {
         admin.setPhone(phone);
         admin.setPassword(password);
 
-        repo.update(admin);
+        update(admin);
     }
 
-
-    // Delete
+    // Delete admin
     public void deleteAdmin(String id)
             throws IOException {
 
-        repo.delete(id);
+        delete(id);
     }
 }
