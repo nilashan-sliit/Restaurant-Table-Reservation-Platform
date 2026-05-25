@@ -122,7 +122,7 @@ public class UserController {
         model.addAttribute("vipCount", vipCount);
         model.addAttribute("regularCount", regularCount);
         model.addAttribute("q", q == null ? "" : q);
-        return "user-list";
+        return "user-list.html";
     }
 
     // ─── DELETE ─────────────────────────────────────────────
